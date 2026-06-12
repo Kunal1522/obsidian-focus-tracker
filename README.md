@@ -3,6 +3,10 @@
 A minimal focus session tracker that lives inside Obsidian. Heatmap of the last 90 days, log sessions with a completion slider, no streaks pressure, no timers — just a visual record of what you did.
 
 Data is stored in `focus-tracker-data.json` at your vault root.
+<img width="1069" height="848" alt="image" src="https://github.com/user-attachments/assets/7bb981a2-ed3c-4e8f-8d81-efa11d083612" />
+<img width="1069" height="848" alt="image" src="https://github.com/user-attachments/assets/b5d16a5f-08b0-4166-b924-081bd21ad40e" />
+<img width="1069" height="848" alt="image" src="https://github.com/user-attachments/assets/ddbacddf-6573-43cd-bdc4-3a4cfe640e7f" />
+
 
 ## Install
 
