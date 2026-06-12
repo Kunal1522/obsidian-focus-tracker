@@ -8,6 +8,14 @@ Data is stored in `focus-tracker-data.json` at your vault root.
 <img width="1069" height="848" alt="image" src="https://github.com/user-attachments/assets/ddbacddf-6573-43cd-bdc4-3a4cfe640e7f" />
 
 
+## Screenshots
+
+![Calm Focus Log heatmap](https://raw.githubusercontent.com/Kunal1522/obsidian-focus-tracker/main/images/overview-1.png)
+
+![Day sessions view](https://raw.githubusercontent.com/Kunal1522/obsidian-focus-tracker/main/images/overview-2.png)
+
+![Log session dialog](https://raw.githubusercontent.com/Kunal1522/obsidian-focus-tracker/main/images/overview-3.png)
+
 ## Install
 
 ### Manual
