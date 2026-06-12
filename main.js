@@ -16,7 +16,7 @@ class FocusTrackerView extends ItemView {
   }
 
   getDisplayText() {
-    return 'Focus Tracker';
+    return 'Calm Focus Log';
   }
 
   getIcon() {
@@ -29,7 +29,7 @@ class FocusTrackerView extends ItemView {
 
     this.iframe = this.contentEl.createEl('iframe', {
       cls: 'focus-tracker-iframe',
-      attr: { title: 'Focus Tracker' }
+      attr: { title: 'Calm Focus Log' }
     });
 
     const html = this.plugin.readAsset('tracker.html');
@@ -74,7 +74,7 @@ module.exports = class FocusTrackerPlugin extends Plugin {
   readAsset(filename) {
     const adapter = this.app.vault.adapter;
     if (!(adapter instanceof FileSystemAdapter)) {
-      new Notice('Focus Tracker: local file access is unavailable on this platform.');
+      new Notice('Calm Focus Log: local file access is unavailable on this platform.');
       return null;
     }
 
@@ -90,7 +90,7 @@ module.exports = class FocusTrackerPlugin extends Plugin {
     try {
       return fs.readFileSync(full, 'utf8');
     } catch (err) {
-      console.error('Focus Tracker: failed to read asset', full, err);
+      console.error('Calm Focus Log: failed to read asset', full, err);
       return null;
     }
   }
@@ -103,8 +103,8 @@ module.exports = class FocusTrackerPlugin extends Plugin {
       const raw = await this.app.vault.read(file);
       return raw ? JSON.parse(raw) : {};
     } catch (err) {
-      console.error('Focus Tracker: failed to parse data file', err);
-      new Notice('Focus Tracker: data file is corrupted.');
+      console.error('Calm Focus Log: failed to parse data file', err);
+      new Notice('Calm Focus Log: data file is corrupted.');
       return {};
     }
   }
@@ -141,12 +141,12 @@ module.exports = class FocusTrackerPlugin extends Plugin {
     this.registerView(VIEW_TYPE, (leaf) => new FocusTrackerView(leaf, this));
 
     this.addCommand({
-      id: 'open-focus-tracker',
-      name: 'Open focus tracker',
+      id: 'open-calm-focus-log',
+      name: 'Open calm focus log',
       callback: () => this.activateView()
     });
 
-    this.addRibbonIcon('calendar-check', 'Focus tracker', () => this.activateView());
+    this.addRibbonIcon('calendar-check', 'Calm focus log', () => this.activateView());
 
     this.addSettingTab(new FocusTrackerSettingTab(this.app, this));
   }
@@ -166,7 +166,7 @@ class FocusTrackerSettingTab extends PluginSettingTab {
       text: `Sessions are saved to ${DATA_FILE} in your vault root.`
     });
     containerEl.createEl('p', {
-      text: 'Open via the ribbon icon or command palette: Open focus tracker.'
+      text: 'Open via the ribbon icon or command palette: Open calm focus log.'
     });
   }
 }
