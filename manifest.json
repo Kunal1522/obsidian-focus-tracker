@@ -1,7 +1,7 @@
 {
   "id": "calm-focus-log",
   "name": "Calm Focus Log",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "minAppVersion": "1.0.0",
   "description": "Log focus sessions on a 90-day heatmap. No goals or timers — just a calm record of what you did.",
   "author": "Kunal1522",
