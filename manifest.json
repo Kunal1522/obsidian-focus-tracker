@@ -1,0 +1,9 @@
+{
+  "id": "focus-tracker",
+  "name": "Focus Tracker",
+  "version": "1.0.0",
+  "minAppVersion": "1.0.0",
+  "description": "Focus session heatmap with vault-backed storage.",
+  "author": "Kunal",
+  "isDesktopOnly": false
+}
