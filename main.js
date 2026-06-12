@@ -162,12 +162,11 @@ class FocusTrackerSettingTab extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
 
-    containerEl.createEl('h2', { text: 'Focus Tracker' });
     containerEl.createEl('p', {
       text: `Sessions are saved to ${DATA_FILE} in your vault root.`
     });
     containerEl.createEl('p', {
-      text: 'Use the ribbon icon or command palette: "Open focus tracker".'
+      text: 'Open via the ribbon icon or command palette: Open focus tracker.'
     });
   }
 }

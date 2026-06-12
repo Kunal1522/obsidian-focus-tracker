@@ -13,7 +13,7 @@ Data is stored in `focus-tracker-data.json` at your vault root.
 
 ```bash
 cd "YOUR_VAULT/.obsidian/plugins"
-git clone https://github.com/Kunal1522/obsidian-focus-tracker.git focus-tracker
+git clone https://github.com/Kunal1522/obsidian-focus-tracker.git focus-session-tracker
 ```
 
 3. In Obsidian: **Settings → Community plugins → Turn on community plugins**
@@ -22,7 +22,7 @@ git clone https://github.com/Kunal1522/obsidian-focus-tracker.git focus-tracker
 ### Update
 
 ```bash
-cd "YOUR_VAULT/.obsidian/plugins/focus-tracker"
+cd "YOUR_VAULT/.obsidian/plugins/focus-session-tracker"
 git pull
 ```
 
