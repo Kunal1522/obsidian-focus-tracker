@@ -519,6 +519,7 @@
 
   let data = {};
   let selectedDate = todayStr();
+  let lastKnownToday = todayStr();
   const inPlugin = window.parent !== window;
 
   // ── storage ──
@@ -553,6 +554,18 @@
 
   function todayStr() {
     return fmtDate(new Date());
+  }
+
+  function tickCalendar() {
+    const today = todayStr();
+    if (today === lastKnownToday) return false;
+    lastKnownToday = today;
+    selectedDate = today;
+    return true;
+  }
+
+  function refreshCalendar() {
+    if (tickCalendar()) renderAll();
   }
 
   function fmtDate(d) {
@@ -784,6 +797,7 @@
   }
 
   function renderAll() {
+    lastKnownToday = todayStr();
     renderHeatmap();
     renderDayDetail();
   }
@@ -804,12 +818,13 @@
   const addModal = document.getElementById('add-modal');
 
   document.getElementById('add-btn').addEventListener('click', () => {
+    refreshCalendar();
     document.getElementById('session-label').value = '';
     document.getElementById('session-dur').value = '25';
     document.getElementById('session-pct').value = '100';
     document.getElementById('session-pct-val').textContent = '100%';
     setDateInputBounds();
-    syncDateInput(selectedDate);
+    syncDateInput(todayStr());
     addModal.classList.add('active');
     document.getElementById('session-label').focus();
   });
@@ -847,6 +862,13 @@
       if (addModal.classList.contains('active')) addModal.classList.remove('active');
     }
   });
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) refreshCalendar();
+  });
+
+  window.addEventListener('focus', refreshCalendar);
+  setInterval(refreshCalendar, 60000);
 
   if (inPlugin) {
     window.addEventListener('message', (e) => {
