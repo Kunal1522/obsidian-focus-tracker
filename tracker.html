@@ -515,6 +515,7 @@
 
   const STORAGE_KEY = 'focus-tracker-data';
   const DAYS = 90;
+  const HEATMAP_ROWS = 7;
   const SESSION_COLOR = '#6b8f5e';
 
   let data = {};
@@ -658,19 +659,18 @@
     const container = document.getElementById('heatmap');
     container.innerHTML = '';
 
-    const startDate = parseDate(dates[0]);
-    const startDow = startDate.getDay();
+    const cols = Math.ceil(DAYS / HEATMAP_ROWS);
+    const padCount = HEATMAP_ROWS * cols - DAYS;
 
-    // pad beginning so grid aligns to weekdays
-    for (let i = 0; i < startDow; i++) {
+    // fixed grid: oldest near top-left, today always bottom-right
+    for (let i = 0; i < padCount; i++) {
       const pad = document.createElement('div');
       pad.className = 'cell pad';
       container.appendChild(pad);
     }
 
     const today = todayStr();
-    const totalCols = startDow + dates.length;
-    container.style.setProperty('--heatmap-cols', totalCols);
+    container.style.setProperty('--heatmap-cols', cols);
 
     dates.forEach(dateStr => {
       const mins = dayMinutes(dateStr);
