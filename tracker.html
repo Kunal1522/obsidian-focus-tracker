@@ -140,6 +140,7 @@
   }
 
   .cell {
+    position: relative;
     width: 100%;
     aspect-ratio: 1;
     min-width: 0;
@@ -168,6 +169,58 @@
   .cell.pad {
     visibility: hidden;
     pointer-events: none;
+  }
+
+  .cell-zen {
+    position: absolute;
+    inset: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .cell-zen svg {
+    width: 82%;
+    height: 82%;
+    filter: drop-shadow(0 0 1px rgba(61, 52, 41, 0.35));
+  }
+
+  .meditation-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding: 0.5rem 0.65rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow);
+  }
+
+  .meditation-row.vanish {
+    animation: meditation-vanish 0.55s ease forwards;
+  }
+
+  @keyframes meditation-vanish {
+    0% { opacity: 1; transform: scale(1); max-height: 48px; margin-bottom: 0.75rem; }
+    100% { opacity: 0; transform: scale(0.92); max-height: 0; margin-bottom: 0; padding: 0; border-width: 0; }
+  }
+
+  .meditation-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .meditation-label input {
+    width: 15px;
+    height: 15px;
+    accent-color: var(--accent);
+    cursor: pointer;
   }
 
   .heatmap-meta {
@@ -469,6 +522,7 @@
     <h2 id="selected-date-label">—</h2>
     <div class="day-total" id="day-total"></div>
   </div>
+  <div id="meditation-slot"></div>
   <div class="sessions" id="sessions"></div>
 </section>
 
@@ -517,6 +571,14 @@
   const DAYS = 90;
   const HEATMAP_ROWS = 7;
   const SESSION_COLOR = '#6b8f5e';
+  const META_MEDITATION = '_meditation';
+
+  const YIN_YANG_SVG = '<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">'
+    + '<circle cx="16" cy="16" r="15" fill="#f2efe8" stroke="#3d3429" stroke-width="1"/>'
+    + '<path d="M16 1a15 15 0 0 1 0 30c-4 0-7.5-3.3-7.5-7.5S12 16 16 16s7.5-3.5 7.5-7.5S20 1 16 1z" fill="#3d3429"/>'
+    + '<circle cx="16" cy="8.5" r="2.2" fill="#f2efe8"/>'
+    + '<circle cx="16" cy="23.5" r="2.2" fill="#3d3429"/>'
+    + '</svg>';
 
   let data = {};
   let selectedDate = todayStr();
@@ -587,6 +649,23 @@
     return r;
   }
 
+  function daySessions(dateStr) {
+    const v = data[dateStr];
+    return Array.isArray(v) ? v : [];
+  }
+
+  function isMeditated(dateStr) {
+    return !!(data[META_MEDITATION] && data[META_MEDITATION][dateStr]);
+  }
+
+  function setMeditated(dateStr, on) {
+    if (!data[META_MEDITATION]) data[META_MEDITATION] = {};
+    if (on) data[META_MEDITATION][dateStr] = true;
+    else delete data[META_MEDITATION][dateStr];
+    if (Object.keys(data[META_MEDITATION]).length === 0) delete data[META_MEDITATION];
+    saveData();
+  }
+
   function sessionPct(s) {
     if (s.pct != null) return Number(s.pct) || 100;
     if (s.status === 'incomplete') return 80;
@@ -598,9 +677,7 @@
   }
 
   function dayMinutes(dateStr) {
-    const sessions = data[dateStr];
-    if (!sessions) return 0;
-    return sessions.reduce((sum, s) => sum + effectiveDur(s), 0);
+    return daySessions(dateStr).reduce((sum, s) => sum + effectiveDur(s), 0);
   }
 
   function maxMinutesInRange(dates) {
@@ -681,6 +758,15 @@
       cell.dataset.date = dateStr;
       if (dateStr === selectedDate) cell.classList.add('selected');
       if (dateStr === today) cell.classList.add('today');
+      if (isMeditated(dateStr)) {
+        cell.classList.add('meditated');
+        const zen = document.createElement('div');
+        zen.className = 'cell-zen';
+        zen.innerHTML = YIN_YANG_SVG;
+        zen.title = 'meditated';
+        cell.appendChild(zen);
+        cell.title = `${dateStr}: ${mins} min · meditated`;
+      }
       cell.addEventListener('click', () => selectDate(dateStr));
       container.appendChild(cell);
     });
@@ -720,19 +806,53 @@
   }
 
   function deleteSession(dateStr, sessionId) {
-    if (!data[dateStr]) return;
-    data[dateStr] = data[dateStr].filter(s => s.id !== sessionId);
+    const sessions = daySessions(dateStr);
+    if (!sessions.length) return;
+    data[dateStr] = sessions.filter(s => s.id !== sessionId);
     if (data[dateStr].length === 0) delete data[dateStr];
     saveData();
     renderAll();
   }
 
+  function renderMeditationRow() {
+    const slot = document.getElementById('meditation-slot');
+    slot.innerHTML = '';
+    if (isMeditated(selectedDate)) return;
+
+    const row = document.createElement('div');
+    row.className = 'meditation-row';
+
+    const label = document.createElement('label');
+    label.className = 'meditation-label';
+
+    const check = document.createElement('input');
+    check.type = 'checkbox';
+    check.addEventListener('change', () => {
+      if (!check.checked) return;
+      row.classList.add('vanish');
+      row.addEventListener('animationend', () => {
+        setMeditated(selectedDate, true);
+        renderAll();
+      }, { once: true });
+    });
+
+    const text = document.createElement('span');
+    text.textContent = 'meditate?';
+
+    label.appendChild(check);
+    label.appendChild(text);
+    row.appendChild(label);
+    slot.appendChild(row);
+  }
+
   function renderDayDetail() {
     document.getElementById('selected-date-label').textContent = fmtDisplayDate(selectedDate);
-    const sessions = data[selectedDate] || [];
+    const sessions = daySessions(selectedDate);
     const total = Math.round(sessions.reduce((s, x) => s + effectiveDur(x), 0));
     document.getElementById('day-total').textContent =
       total > 0 ? `${total} min` : '';
+
+    renderMeditationRow();
 
     const container = document.getElementById('sessions');
     container.innerHTML = '';
@@ -806,7 +926,7 @@
 
   function addSession(label, dur, pct, dateStr) {
     const target = dateStr || getLogDate();
-    if (!data[target]) data[target] = [];
+    if (!Array.isArray(data[target])) data[target] = [];
     data[target].push({ id: uid(), label, dur: Number(dur), pct: Number(pct) });
     selectedDate = target;
     saveData();
