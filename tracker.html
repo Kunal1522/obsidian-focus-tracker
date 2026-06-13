@@ -574,7 +574,7 @@
   }
 
   function sessionPct(s) {
-    if (s.pct != null) return s.pct;
+    if (s.pct != null) return Number(s.pct) || 100;
     if (s.status === 'incomplete') return 80;
     return 100;
   }
@@ -729,25 +729,21 @@
       return;
     }
 
-    const maxDur = Math.max(...sessions.map(s => s.dur));
-
     sessions.forEach(session => {
       const name = session.label || 'session';
-      const pct = sessionPct(session);
-      const barWidth = Math.max(8, (session.dur / maxDur) * 100);
-      const fillWidth = barWidth * (pct / 100);
+      const pct = Math.min(100, Math.max(0, sessionPct(session)));
 
       const card = document.createElement('div');
       card.className = 'session-card';
 
       const track = document.createElement('div');
       track.className = 'session-track';
-      track.style.width = barWidth + '%';
+      track.style.width = '100%';
       track.style.background = SESSION_COLOR;
 
       const fill = document.createElement('div');
       fill.className = 'session-fill';
-      fill.style.width = fillWidth + '%';
+      fill.style.width = pct + '%';
       fill.style.background = SESSION_COLOR;
 
       const content = document.createElement('div');
